@@ -1,0 +1,141 @@
+item,model,day,prediction,date
+Apple,Moving Average,1,133,2024-03-31
+Apple,Moving Average,2,101,2024-04-01
+Apple,Moving Average,3,106,2024-04-02
+Apple,Moving Average,4,112,2024-04-03
+Apple,Moving Average,5,117,2024-04-04
+Apple,Moving Average,6,122,2024-04-05
+Apple,Moving Average,7,138,2024-04-06
+Apple,Linear Regression,1,109,2024-03-31
+Apple,Linear Regression,2,109,2024-04-01
+Apple,Linear Regression,3,109,2024-04-02
+Apple,Linear Regression,4,109,2024-04-03
+Apple,Linear Regression,5,109,2024-04-04
+Apple,Linear Regression,6,109,2024-04-05
+Apple,Linear Regression,7,109,2024-04-06
+Apple,Time Series,1,115,2024-03-31
+Apple,Time Series,2,105,2024-04-01
+Apple,Time Series,3,105,2024-04-02
+Apple,Time Series,4,101,2024-04-03
+Apple,Time Series,5,102,2024-04-04
+Apple,Time Series,6,93,2024-04-05
+Apple,Time Series,7,115,2024-04-06
+Apple,XGBoost,1,110,2024-03-31
+Apple,XGBoost,2,107,2024-04-01
+Apple,XGBoost,3,105,2024-04-02
+Apple,XGBoost,4,108,2024-04-03
+Apple,XGBoost,5,110,2024-04-04
+Apple,XGBoost,6,110,2024-04-05
+Apple,XGBoost,7,111,2024-04-06
+Banana,Moving Average,1,75,2024-03-31
+Banana,Moving Average,2,57,2024-04-01
+Banana,Moving Average,3,60,2024-04-02
+Banana,Moving Average,4,63,2024-04-03
+Banana,Moving Average,5,66,2024-04-04
+Banana,Moving Average,6,69,2024-04-05
+Banana,Moving Average,7,78,2024-04-06
+Banana,Linear Regression,1,72,2024-03-31
+Banana,Linear Regression,2,72,2024-04-01
+Banana,Linear Regression,3,72,2024-04-02
+Banana,Linear Regression,4,72,2024-04-03
+Banana,Linear Regression,5,72,2024-04-04
+Banana,Linear Regression,6,72,2024-04-05
+Banana,Linear Regression,7,72,2024-04-06
+Banana,Time Series,1,67,2024-03-31
+Banana,Time Series,2,55,2024-04-01
+Banana,Time Series,3,61,2024-04-02
+Banana,Time Series,4,69,2024-04-03
+Banana,Time Series,5,58,2024-04-04
+Banana,Time Series,6,46,2024-04-05
+Banana,Time Series,7,67,2024-04-06
+Banana,XGBoost,1,74,2024-03-31
+Banana,XGBoost,2,72,2024-04-01
+Banana,XGBoost,3,73,2024-04-02
+Banana,XGBoost,4,73,2024-04-03
+Banana,XGBoost,5,72,2024-04-04
+Banana,XGBoost,6,71,2024-04-05
+Banana,XGBoost,7,74,2024-04-06
+Tomato,Moving Average,1,54,2024-03-31
+Tomato,Moving Average,2,41,2024-04-01
+Tomato,Moving Average,3,43,2024-04-02
+Tomato,Moving Average,4,45,2024-04-03
+Tomato,Moving Average,5,47,2024-04-04
+Tomato,Moving Average,6,50,2024-04-05
+Tomato,Moving Average,7,56,2024-04-06
+Tomato,Linear Regression,1,46,2024-03-31
+Tomato,Linear Regression,2,46,2024-04-01
+Tomato,Linear Regression,3,46,2024-04-02
+Tomato,Linear Regression,4,46,2024-04-03
+Tomato,Linear Regression,5,46,2024-04-04
+Tomato,Linear Regression,6,46,2024-04-05
+Tomato,Linear Regression,7,46,2024-04-06
+Tomato,Time Series,1,42,2024-03-31
+Tomato,Time Series,2,34,2024-04-01
+Tomato,Time Series,3,53,2024-04-02
+Tomato,Time Series,4,51,2024-04-03
+Tomato,Time Series,5,45,2024-04-04
+Tomato,Time Series,6,30,2024-04-05
+Tomato,Time Series,7,40,2024-04-06
+Tomato,XGBoost,1,41,2024-03-31
+Tomato,XGBoost,2,41,2024-04-01
+Tomato,XGBoost,3,42,2024-04-02
+Tomato,XGBoost,4,42,2024-04-03
+Tomato,XGBoost,5,42,2024-04-04
+Tomato,XGBoost,6,41,2024-04-05
+Tomato,XGBoost,7,41,2024-04-06
+Potato,Moving Average,1,97,2024-03-31
+Potato,Moving Average,2,73,2024-04-01
+Potato,Moving Average,3,77,2024-04-02
+Potato,Moving Average,4,81,2024-04-03
+Potato,Moving Average,5,85,2024-04-04
+Potato,Moving Average,6,89,2024-04-05
+Potato,Moving Average,7,100,2024-04-06
+Potato,Linear Regression,1,79,2024-03-31
+Potato,Linear Regression,2,79,2024-04-01
+Potato,Linear Regression,3,79,2024-04-02
+Potato,Linear Regression,4,79,2024-04-03
+Potato,Linear Regression,5,79,2024-04-04
+Potato,Linear Regression,6,79,2024-04-05
+Potato,Linear Regression,7,79,2024-04-06
+Potato,Time Series,1,84,2024-03-31
+Potato,Time Series,2,74,2024-04-01
+Potato,Time Series,3,74,2024-04-02
+Potato,Time Series,4,79,2024-04-03
+Potato,Time Series,5,77,2024-04-04
+Potato,Time Series,6,72,2024-04-05
+Potato,Time Series,7,87,2024-04-06
+Potato,XGBoost,1,82,2024-03-31
+Potato,XGBoost,2,81,2024-04-01
+Potato,XGBoost,3,81,2024-04-02
+Potato,XGBoost,4,80,2024-04-03
+Potato,XGBoost,5,81,2024-04-04
+Potato,XGBoost,6,81,2024-04-05
+Potato,XGBoost,7,81,2024-04-06
+Spinach,Moving Average,1,41,2024-03-31
+Spinach,Moving Average,2,31,2024-04-01
+Spinach,Moving Average,3,33,2024-04-02
+Spinach,Moving Average,4,34,2024-04-03
+Spinach,Moving Average,5,36,2024-04-04
+Spinach,Moving Average,6,38,2024-04-05
+Spinach,Moving Average,7,43,2024-04-06
+Spinach,Linear Regression,1,27,2024-03-31
+Spinach,Linear Regression,2,27,2024-04-01
+Spinach,Linear Regression,3,27,2024-04-02
+Spinach,Linear Regression,4,27,2024-04-03
+Spinach,Linear Regression,5,27,2024-04-04
+Spinach,Linear Regression,6,27,2024-04-05
+Spinach,Linear Regression,7,27,2024-04-06
+Spinach,Time Series,1,26,2024-03-31
+Spinach,Time Series,2,27,2024-04-01
+Spinach,Time Series,3,45,2024-04-02
+Spinach,Time Series,4,43,2024-04-03
+Spinach,Time Series,5,44,2024-04-04
+Spinach,Time Series,6,20,2024-04-05
+Spinach,Time Series,7,21,2024-04-06
+Spinach,XGBoost,1,30,2024-03-31
+Spinach,XGBoost,2,31,2024-04-01
+Spinach,XGBoost,3,30,2024-04-02
+Spinach,XGBoost,4,30,2024-04-03
+Spinach,XGBoost,5,30,2024-04-04
+Spinach,XGBoost,6,29,2024-04-05
+Spinach,XGBoost,7,29,2024-04-06
