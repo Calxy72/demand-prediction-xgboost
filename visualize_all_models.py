@@ -1,26 +1,46 @@
-# visualize_comparison.py (Updated - All Models vs Historical)
+# visualize_comparison.py (Fixed - No emojis for Windows compatibility)
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import json
 from datetime import datetime, timedelta
 import seaborn as sns
+import os
 import warnings
 warnings.filterwarnings('ignore')
+
+def create_output_folder():
+    """Create output folder if it doesn't exist"""
+    output_dir = 'outputs'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"[INFO] Created outputs folder: {output_dir}/")
+    
+    # Create subfolders for organization
+    subfolders = ['charts', 'tables', 'predictions', 'comparisons']
+    for folder in subfolders:
+        path = os.path.join(output_dir, folder)
+        if not os.path.exists(path):
+            os.makedirs(path)
+    
+    return output_dir
 
 def load_and_visualize():
     """Load predictions and create comparison plots"""
     
+    # Create output folder
+    output_dir = create_output_folder()
+    
     # Load data
     try:
         df = pd.read_csv('enhanced_sales_data.csv')
-        print("📊 Loaded enhanced_sales_data.csv")
+        print("[INFO] Loaded enhanced_sales_data.csv")
     except FileNotFoundError:
         try:
             df = pd.read_csv('large_sales_data.csv')
-            print("📊 Loaded large_sales_data.csv")
+            print("[INFO] Loaded large_sales_data.csv")
         except FileNotFoundError:
-            print("❌ No data file found. Please generate data first.")
+            print("[ERROR] No data file found. Please generate data first.")
             return None, None
     
     df['date'] = pd.to_datetime(df['date'])
@@ -28,9 +48,9 @@ def load_and_visualize():
     try:
         with open('all_model_predictions.json', 'r') as f:
             predictions = json.load(f)
-        print("✅ Loaded predictions from all_model_predictions.json")
+        print("[INFO] Loaded predictions from all_model_predictions.json")
     except FileNotFoundError:
-        print("❌ all_model_predictions.json not found. Run models.py first!")
+        print("[ERROR] all_model_predictions.json not found. Run models.py first!")
         return None, None
     
     # Get last 30 days of actual data for comparison
@@ -43,16 +63,14 @@ def load_and_visualize():
     n_items = len(items)
     
     if n_items == 0:
-        print("❌ No items found in predictions")
+        print("[ERROR] No items found in predictions")
         return None, None
     
-    # Create figure with 3 columns: 
-    # 1. Model predictions comparison
-    # 2. ALL models vs historical
-    # 3. Feature importance
+    # ============================================
+    # MAIN COMPARISON PLOT (All items in one figure)
+    # ============================================
+    print("[CHART] Creating main comparison plot...")
     fig = plt.figure(figsize=(20, 6*n_items))
-    
-    # Create gridspec for more flexible layout
     gs = fig.add_gridspec(n_items, 3, hspace=0.4, wspace=0.3)
     
     for idx, item in enumerate(items):
@@ -66,8 +84,6 @@ def load_and_visualize():
             continue
             
         future_dates = [last_date + timedelta(days=i+1) for i in range(7)]
-        future_dates_str = [d.strftime('%Y-%m-%d') for d in future_dates]
-        
         model_predictions = predictions[item]
         
         # ============================================
@@ -80,21 +96,19 @@ def load_and_visualize():
                  'Time Series': 'red', 
                  'XGBoost': 'orange'}
         
-        legend_labels = []
         for model_name, color in colors.items():
             if model_name in model_predictions and model_name != 'XGBoost Metrics' and model_name != 'Top Features':
                 preds = model_predictions[model_name]
                 if isinstance(preds, list) and len(preds) == 7:
                     ax1.plot(range(1, 8), preds, 'o-', color=color, 
                             linewidth=2.5, markersize=8, alpha=0.8, label=model_name)
-                    legend_labels.append(model_name)
         
-        ax1.set_title(f'{item} - Model Predictions Comparison', fontsize=14, fontweight='bold')
+        ax1.set_title(f'{item} - Model Predictions', fontsize=14, fontweight='bold')
         ax1.set_xlabel('Days Ahead', fontsize=12)
         ax1.set_ylabel('Predicted Demand', fontsize=12)
         ax1.set_xticks(range(1, 8))
         ax1.set_xticklabels([f'Day {i}' for i in range(1, 8)])
-        ax1.legend(fontsize=10)
+        ax1.legend(fontsize=9)
         ax1.grid(True, alpha=0.3)
         
         # ============================================
@@ -106,38 +120,17 @@ def load_and_visualize():
         item_recent_data = recent_data[recent_data['item'] == item]
         if len(item_recent_data) > 0:
             ax2.plot(item_recent_data['date'], item_recent_data['sales'], 'ko-', 
-                    label='Historical (Last 30 days)', linewidth=2, markersize=4, alpha=0.7)
+                    label='Historical (30 days)', linewidth=2, markersize=4, alpha=0.7)
         
         # Plot predictions from ALL models
-        # We'll offset each model slightly for clarity
-        date_offset = {
-            'Moving Average': timedelta(hours=-6),
-            'Linear Regression': timedelta(hours=-3),
-            'Time Series': timedelta(hours=0),
-            'XGBoost': timedelta(hours=3)
-        }
-        
         for model_name, color in colors.items():
             if model_name in model_predictions and model_name != 'XGBoost Metrics' and model_name != 'Top Features':
                 preds = model_predictions[model_name]
                 if isinstance(preds, list) and len(preds) == 7:
-                    # Apply slight time offset for each model
-                    offset_dates = [d + date_offset[model_name] for d in future_dates]
-                    
-                    # Plot line
-                    ax2.plot(offset_dates, preds, 'o-', color=color, 
-                            linewidth=2, markersize=6, alpha=0.8, label=f'{model_name} Predictions')
-                    
-                    # Add text labels for first and last predictions
-                    if len(preds) > 0:
-                        # First prediction
-                        ax2.text(offset_dates[0], preds[0], f'{preds[0]}', 
-                                fontsize=9, ha='center', va='bottom', color=color)
-                        # Last prediction
-                        ax2.text(offset_dates[-1], preds[-1], f'{preds[-1]}', 
-                                fontsize=9, ha='center', va='bottom', color=color)
+                    ax2.plot(future_dates, preds, 'o-', color=color, 
+                            linewidth=2, markersize=6, alpha=0.8, label=f'{model_name}')
         
-        ax2.set_title(f'{item} - Historical vs All Model Predictions', fontsize=14, fontweight='bold')
+        ax2.set_title(f'{item} - All Models vs Historical', fontsize=14, fontweight='bold')
         ax2.set_xlabel('Date', fontsize=12)
         ax2.set_ylabel('Demand', fontsize=12)
         ax2.legend(fontsize=9, loc='upper left')
@@ -145,19 +138,18 @@ def load_and_visualize():
         plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
         
         # ============================================
-        # PLOT 3: Feature Importance (XGBoost) or Model Performance
+        # PLOT 3: Feature Importance (XGBoost)
         # ============================================
         ax3 = fig.add_subplot(gs[idx, 2])
         
-        # Option A: Show XGBoost feature importance
         if 'Top Features' in model_predictions and model_predictions['Top Features']:
             top_features = model_predictions['Top Features']
             
             # Handle different formats
-            if isinstance(top_features[0], list):  # List of [feature, importance]
+            if isinstance(top_features[0], list):
                 features = [str(f[0]) for f in top_features[:8]]
                 importance = [float(f[1]) for f in top_features[:8]]
-            elif isinstance(top_features[0], dict):  # List of dicts
+            elif isinstance(top_features[0], dict):
                 features = [str(f.get('feature', f'Feature_{i}')) for i, f in enumerate(top_features[:8])]
                 importance = [float(f.get('importance', 0)) for f in top_features[:8]]
             else:
@@ -172,51 +164,25 @@ def load_and_visualize():
             ax3.set_title(f'{item} - XGBoost Feature Importance', fontsize=14, fontweight='bold')
             ax3.grid(True, alpha=0.3, axis='x')
             
-            # Add value labels on bars
+            # Add value labels
             for i, (bar, val) in enumerate(zip(bars, importance)):
                 width = bar.get_width()
                 ax3.text(width, bar.get_y() + bar.get_height()/2, 
                         f'{val:.3f}', ha='left', va='center', fontsize=8)
-        
-        # Option B: If no feature importance, show model performance comparison
-        elif 'XGBoost Metrics' in model_predictions:
-            # Create a simple bar chart comparing model predictions
-            models = []
-            avg_predictions = []
-            
-            for model_name in colors.keys():
-                if model_name in model_predictions and isinstance(model_predictions[model_name], list):
-                    preds = model_predictions[model_name]
-                    if preds:
-                        avg_pred = np.mean(preds)
-                        models.append(model_name)
-                        avg_predictions.append(avg_pred)
-            
-            if models:
-                bars = ax3.bar(models, avg_predictions, 
-                              color=[colors[m] for m in models], alpha=0.8)
-                ax3.set_title(f'{item} - Average Predictions', fontsize=14, fontweight='bold')
-                ax3.set_ylabel('Average Demand')
-                ax3.grid(True, alpha=0.3)
-                
-                # Add value labels
-                for bar in bars:
-                    height = bar.get_height()
-                    ax3.text(bar.get_x() + bar.get_width()/2., height,
-                            f'{height:.1f}', ha='center', va='bottom')
-                
-                # Rotate x labels if needed
-                plt.setp(ax3.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
-    plt.suptitle('Demand Prediction Model Comparison', fontsize=16, fontweight='bold', y=1.02)
+    plt.suptitle('Demand Prediction - All Models Comparison', fontsize=16, fontweight='bold', y=1.02)
     plt.tight_layout()
-    plt.savefig('model_comparison_all_models.png', dpi=150, bbox_inches='tight')
+    
+    # Save main comparison plot
+    main_plot_path = os.path.join(output_dir, 'charts', 'all_models_comparison.png')
+    plt.savefig(main_plot_path, dpi=150, bbox_inches='tight')
     plt.show()
+    print(f"[OK] Saved main comparison to: {main_plot_path}")
     
     # ============================================
-    # CREATE SEPARATE PLOT: Each model vs historical individually
+    # INDIVIDUAL MODEL PLOTS (Separate for each model)
     # ============================================
-    print("\n📊 Creating individual model comparison plots...")
+    print("\n[CHART] Creating individual model comparison plots...")
     
     for item in items:
         item_data = df[df['item'] == item].sort_values('date')
@@ -230,8 +196,8 @@ def load_and_visualize():
         future_dates = [last_date + timedelta(days=i+1) for i in range(7)]
         model_predictions = predictions[item]
         
-        # Create a 2x2 grid for each model
-        fig2, axes = plt.subplots(2, 2, figsize=(15, 10))
+        # Create individual plot for this item
+        fig_ind, axes = plt.subplots(2, 2, figsize=(15, 10))
         axes = axes.flatten()
         
         model_names = ['Moving Average', 'Linear Regression', 'Time Series', 'XGBoost']
@@ -243,39 +209,42 @@ def load_and_visualize():
                 
             ax = axes[i]
             
-            # Plot historical data (last 30 days)
+            # Plot historical data
             item_recent_data = recent_data[recent_data['item'] == item]
             if len(item_recent_data) > 0:
                 ax.plot(item_recent_data['date'], item_recent_data['sales'], 'ko-', 
-                       label='Historical (Last 30 days)', linewidth=1.5, markersize=3, alpha=0.7)
+                       label='Historical (30 days)', linewidth=1.5, markersize=3, alpha=0.7)
             
             # Plot model predictions
             if model_name in model_predictions and model_name != 'XGBoost Metrics' and model_name != 'Top Features':
                 preds = model_predictions[model_name]
                 if isinstance(preds, list) and len(preds) == 7:
                     ax.plot(future_dates, preds, 'o-', color=color, 
-                           linewidth=2, markersize=6, alpha=0.8, label=f'{model_name} Predictions')
+                           linewidth=2, markersize=6, alpha=0.8, label=f'{model_name}')
                     
-                    # Add prediction values as text
+                    # Add prediction values
                     for j, (date, pred) in enumerate(zip(future_dates, preds)):
                         ax.text(date, pred, f'{pred}', fontsize=9, 
                                ha='center', va='bottom', color=color)
             
-            ax.set_title(f'{item} - {model_name} Predictions', fontsize=12, fontweight='bold')
+            ax.set_title(f'{item} - {model_name}', fontsize=12, fontweight='bold')
             ax.set_xlabel('Date')
             ax.set_ylabel('Demand')
             ax.legend(fontsize=9)
             ax.grid(True, alpha=0.3)
             plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
         
-        plt.suptitle(f'{item} - Individual Model Comparisons', fontsize=14, fontweight='bold')
+        plt.suptitle(f'{item} - Individual Model Predictions', fontsize=14, fontweight='bold')
         plt.tight_layout()
-        plt.savefig(f'{item}_individual_models.png', dpi=150, bbox_inches='tight')
-        plt.close(fig2)  # Close the figure to free memory
-        print(f"  ✅ Saved {item}_individual_models.png")
+        
+        # Save individual plot
+        individual_path = os.path.join(output_dir, 'charts', f'{item}_individual_models.png')
+        plt.savefig(individual_path, dpi=150, bbox_inches='tight')
+        plt.close(fig_ind)
+        print(f"[OK] Saved {item} individual plot to: {individual_path}")
     
     # ============================================
-    # Performance metrics table
+    # MODEL PERFORMANCE SUMMARY TABLE
     # ============================================
     print("\n" + "="*80)
     print("MODEL PERFORMANCE METRICS")
@@ -287,36 +256,44 @@ def load_and_visualize():
         
         item_summary = {'Item': item}
         
-        # XGBoost metrics if available
+        # XGBoost metrics
         if 'XGBoost Metrics' in model_predictions:
             metrics = model_predictions['XGBoost Metrics']
             item_summary.update({
-                'XGBoost MAE': f"{metrics.get('MAE', 0):.2f}",
-                'XGBoost RMSE': f"{metrics.get('RMSE', 0):.2f}",
-                'XGBoost R²': f"{metrics.get('R2', metrics.get('R²', 0)):.3f}"
+                'XGBoost_MAE': f"{metrics.get('MAE', 0):.2f}",
+                'XGBoost_RMSE': f"{metrics.get('RMSE', 0):.2f}",
+                'XGBoost_R2': f"{metrics.get('R2', metrics.get('R²', 0)):.3f}"
             })
         
-        # Average predictions for all models
+        # All model predictions
         for model_name in ['Moving Average', 'Linear Regression', 'Time Series', 'XGBoost']:
             if model_name in model_predictions and isinstance(model_predictions[model_name], list):
                 preds = model_predictions[model_name]
                 if preds:
                     avg_pred = np.mean(preds)
                     std_pred = np.std(preds)
-                    item_summary[f'{model_name} Avg'] = f"{avg_pred:.1f}"
-                    item_summary[f'{model_name} Std'] = f"{std_pred:.1f}"
+                    item_summary[f'{model_name.replace(" ", "_")}_Avg'] = f"{avg_pred:.1f}"
+                    item_summary[f'{model_name.replace(" ", "_")}_Std'] = f"{std_pred:.1f}"
         
         metrics_summary.append(item_summary)
     
     if metrics_summary:
         metrics_df = pd.DataFrame(metrics_summary)
-        print("\n📈 Performance Summary:")
+        
+        # Save metrics to CSV
+        metrics_path = os.path.join(output_dir, 'tables', 'model_performance_metrics.csv')
+        metrics_df.to_csv(metrics_path, index=False)
+        
+        print("\n[TABLE] Performance Summary:")
         print(metrics_df.to_string(index=False))
+        print(f"\n[OK] Metrics saved to: {metrics_path}")
     else:
-        print("⚠️ No performance metrics found")
+        print("[WARNING] No performance metrics found")
         metrics_df = pd.DataFrame()
     
-    # Save detailed predictions
+    # ============================================
+    # DETAILED PREDICTIONS (All models, all days)
+    # ============================================
     detailed_data = []
     for item in items:
         model_predictions = predictions[item]
@@ -338,26 +315,122 @@ def load_and_visualize():
     
     if detailed_data:
         detailed_df = pd.DataFrame(detailed_data)
-        detailed_df.to_csv('detailed_predictions_all_models.csv', index=False)
         
-        print("\n" + "="*80)
-        print(f"✅ Detailed predictions saved to 'detailed_predictions_all_models.csv'")
-        print(f"✅ Main visualization saved to 'model_comparison_all_models.png'")
-        print(f"✅ Individual model plots saved as '{{item}}_individual_models.png'")
-        print("="*80)
+        # Save detailed predictions
+        detailed_path = os.path.join(output_dir, 'predictions', 'detailed_predictions_all_models.csv')
+        detailed_df.to_csv(detailed_path, index=False)
+        
+        print(f"[OK] Detailed predictions saved to: {detailed_path}")
     else:
-        print("⚠️ No detailed predictions generated")
+        print("[WARNING] No detailed predictions generated")
         detailed_df = pd.DataFrame()
+    
+    # ============================================
+    # CREATE MODEL COMPARISON TABLE (Console + File)
+    # ============================================
+    comparison_data = []
+    for item in items:
+        model_data = predictions[item]
+        
+        for model_name in ['Moving Average', 'Linear Regression', 'Time Series', 'XGBoost']:
+            if model_name in model_data and isinstance(model_data[model_name], list):
+                preds = model_data[model_name][:7]
+                if len(preds) == 7:
+                    for i, pred in enumerate(preds):
+                        comparison_data.append({
+                            'item': item,
+                            'model': model_name,
+                            'day': i+1,
+                            'prediction': pred
+                        })
+    
+    if comparison_data:
+        comparison_df = pd.DataFrame(comparison_data)
+        
+        # Pivot for better view
+        pivot_df = comparison_df.pivot_table(
+            index=['item', 'model'], 
+            columns='day', 
+            values='prediction',
+            aggfunc='first'
+        )
+        
+        # Save comparison table
+        comparison_path = os.path.join(output_dir, 'comparisons', 'model_predictions_table.csv')
+        pivot_df.to_csv(comparison_path)
+        
+        print(f"[OK] Model comparison table saved to: {comparison_path}")
+    
+    # ============================================
+    # CREATE PREDICTION SUMMARY BY DAY
+    # ============================================
+    if detailed_data:
+        summary_by_day = detailed_df.groupby(['item', 'day']).agg({
+            'prediction': ['mean', 'std', 'min', 'max']
+        }).round(1)
+        
+        summary_path = os.path.join(output_dir, 'tables', 'daily_prediction_summary.csv')
+        summary_by_day.to_csv(summary_path)
+        
+        print(f"[OK] Daily prediction summary saved to: {summary_path}")
+    
+    # ============================================
+    # CREATE README FOR OUTPUTS FOLDER
+    # ============================================
+    readme_content = f"""# Output Files Summary
+
+Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+## Folder Structure:
+outputs/
+├── charts/                    # Visualization plots
+│   ├── all_models_comparison.png      # Main comparison chart
+│   └── [item]_individual_models.png   # Individual model charts
+├── tables/                    # Performance metrics
+│   ├── model_performance_metrics.csv   # Model performance metrics
+│   └── daily_prediction_summary.csv    # Daily predictions summary
+├── predictions/               # Detailed predictions
+│   └── detailed_predictions_all_models.csv
+└── comparisons/              # Comparison tables
+    └── model_predictions_table.csv
+
+## Data Summary:
+- Items analyzed: {len(items)}
+- Models compared: 4 (Moving Average, Linear Regression, Time Series, XGBoost)
+- Prediction horizon: 7 days
+- Historical data: Last 30 days used for comparison
+
+## Files Description:
+1. charts/all_models_comparison.png: Main comparison plot showing all models
+2. charts/[item]_individual_models.png: Individual plots for each item
+3. tables/model_performance_metrics.csv: Performance metrics for all models
+4. tables/daily_prediction_summary.csv: Summary of daily predictions
+5. predictions/detailed_predictions_all_models.csv: Detailed predictions
+6. comparisons/model_predictions_table.csv: Comparison table in CSV format
+"""
+
+    readme_path = os.path.join(output_dir, 'README.md')
+    try:
+        with open(readme_path, 'w', encoding='utf-8') as f:
+            f.write(readme_content)
+        print(f"[OK] Output summary saved to: {readme_path}")
+    except Exception as e:
+        print(f"[WARNING] Could not save README: {e}")
+        # Try without special encoding
+        with open(readme_path, 'w') as f:
+            f.write("# Output Files Summary\n\nGenerated on: " + 
+                   datetime.now().strftime('%Y-%m-%d %H:%M:%S') + 
+                   "\n\nSee other files for results.")
     
     return metrics_df, detailed_df
 
 def create_model_comparison_table():
-    """Create a nice comparison table of all models"""
+    """Create a nice comparison table of all models (console output)"""
     try:
         with open('all_model_predictions.json', 'r') as f:
             predictions = json.load(f)
     except FileNotFoundError:
-        print("❌ No predictions file found")
+        print("[ERROR] No predictions file found")
         return
     
     print("\n" + "="*90)
@@ -365,7 +438,7 @@ def create_model_comparison_table():
     print("="*90)
     
     for item in predictions.keys():
-        print(f"\n📊 {item}:")
+        print(f"\n{item}:")
         print("-" * 40)
         
         model_data = predictions[item]
@@ -376,30 +449,46 @@ def create_model_comparison_table():
         
         for model_name in ['Moving Average', 'Linear Regression', 'Time Series', 'XGBoost']:
             if model_name in model_data and isinstance(model_data[model_name], list):
-                preds = model_data[model_name][:7]  # Only first 7 days
+                preds = model_data[model_name][:7]
                 if len(preds) == 7:
                     avg_pred = sum(preds) / len(preds)
                     pred_str = '  '.join([f'{p:6.1f}' for p in preds])
                     print(f"{model_name:<20} {pred_str} {avg_pred:8.1f}")
         
-        # Show XGBoost metrics if available
+        # Show XGBoost metrics
         if 'XGBoost Metrics' in model_data:
             metrics = model_data['XGBoost Metrics']
-            print("\n📈 XGBoost Performance:")
+            print("\nXGBoost Performance:")
             print(f"  MAE:  {metrics.get('MAE', 0):.2f}")
             print(f"  RMSE: {metrics.get('RMSE', 0):.2f}")
-            print(f"  R²:   {metrics.get('R2', metrics.get('R²', 0)):.3f}")
+            print(f"  R2:   {metrics.get('R2', metrics.get('R²', 0)):.3f}")
 
 if __name__ == "__main__":
-    print("📊 Starting visualization generation...")
     print("="*60)
+    print("Starting visualization generation...")
+    print("="*60)
+    
+    # Create output folder
+    create_output_folder()
     
     # Run main visualization
     metrics_df, detailed_df = load_and_visualize()
     
-    # Create comparison table
+    # Create comparison table in console
     create_model_comparison_table()
     
     print("\n" + "="*60)
-    print("✅ Visualization generation complete!")
+    print("SUCCESS: Visualization generation complete!")
+    print("All outputs saved in 'outputs/' folder")
     print("="*60)
+    
+    # Show folder structure
+    print("\nOutput Folder Structure:")
+    print("outputs/")
+    for root, dirs, files in os.walk('outputs'):
+        level = root.replace('outputs', '').count(os.sep)
+        indent = ' ' * 2 * level
+        print(f"{indent}{os.path.basename(root)}/")
+        subindent = ' ' * 2 * (level + 1)
+        for file in files:
+            print(f"{subindent}{file}")

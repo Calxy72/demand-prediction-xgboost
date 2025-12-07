@@ -1,0 +1,6 @@
+Item,XGBoost_MAE,XGBoost_RMSE,XGBoost_R2,Moving_Average_Avg,Moving_Average_Std,Linear_Regression_Avg,Linear_Regression_Std,Time_Series_Avg,Time_Series_Std,XGBoost_Avg,XGBoost_Std
+Apple,5.89,7.41,0.800,118.4,12.6,109.0,0.0,105.1,7.3,108.7,2.0
+Banana,2.49,3.28,0.852,66.9,7.1,72.0,0.0,60.4,7.6,72.7,1.0
+Tomato,4.75,6.07,0.839,48.0,5.2,46.0,0.0,42.1,7.8,41.4,0.5
+Potato,3.12,3.83,0.786,86.0,9.3,79.0,0.0,78.1,5.2,81.0,0.5
+Spinach,4.21,6.16,0.841,36.6,4.0,27.0,0.0,32.3,10.4,29.9,0.6

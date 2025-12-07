@@ -1,0 +1,21 @@
+item,model,1,2,3,4,5,6,7
+Apple,Linear Regression,109,109,109,109,109,109,109
+Apple,Moving Average,133,101,106,112,117,122,138
+Apple,Time Series,115,105,105,101,102,93,115
+Apple,XGBoost,110,107,105,108,110,110,111
+Banana,Linear Regression,72,72,72,72,72,72,72
+Banana,Moving Average,75,57,60,63,66,69,78
+Banana,Time Series,67,55,61,69,58,46,67
+Banana,XGBoost,74,72,73,73,72,71,74
+Potato,Linear Regression,79,79,79,79,79,79,79
+Potato,Moving Average,97,73,77,81,85,89,100
+Potato,Time Series,84,74,74,79,77,72,87
+Potato,XGBoost,82,81,81,80,81,81,81
+Spinach,Linear Regression,27,27,27,27,27,27,27
+Spinach,Moving Average,41,31,33,34,36,38,43
+Spinach,Time Series,26,27,45,43,44,20,21
+Spinach,XGBoost,30,31,30,30,30,29,29
+Tomato,Linear Regression,46,46,46,46,46,46,46
+Tomato,Moving Average,54,41,43,45,47,50,56
+Tomato,Time Series,42,34,53,51,45,30,40
+Tomato,XGBoost,41,41,42,42,42,41,41
