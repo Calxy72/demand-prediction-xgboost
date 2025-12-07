@@ -3,6 +3,7 @@
 Generated on: 2025-12-07 23:16:23
 
 ## Folder Structure:
+```bash
 outputs/
 ├── charts/                    # Visualization plots
 │   ├── all_models_comparison.png      # Main comparison chart
@@ -14,7 +15,7 @@ outputs/
 │   └── detailed_predictions_all_models.csv
 └── comparisons/              # Comparison tables
     └── model_predictions_table.csv
-
+```
 ## Data Summary:
 - Items analyzed: 5
 - Models compared: 4 (Moving Average, Linear Regression, Time Series, XGBoost)
