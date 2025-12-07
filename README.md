@@ -31,6 +31,7 @@ A comprehensive demand prediction system implementing 4 different modeling appro
    - Automated model recommendation
 
 ## Project Structure
+```bash
 demand_prediction_xgboost/
 ├── generate_enhanced_data.py # Generate realistic dataset
 ├── enhanced_sales_data.csv # Generated sales data (90 days)
@@ -42,7 +43,7 @@ demand_prediction_xgboost/
 ├── detailed_predictions_xgboost.csv # Detailed predictions
 ├── requirements.txt # Python dependencies (with xgboost)
 └── README.md # This file
-
+```
 ## Getting Started
 
 1. Clone the repository
