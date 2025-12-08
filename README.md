@@ -117,6 +117,10 @@ With the current 90-day synthetic dataset, predictions show reasonable patterns 
 ### Scalability:
 The architecture is production-ready and accuracy will improve naturally with more data collection.
 
+# Video
+```bash
+https://drive.google.com/file/d/1676Q6PoGnSYpegrAQmuVTFRo_tkij14Y/view?usp=sharing 
+```
 # Citation
 
 If you use this in your work, please cite:
