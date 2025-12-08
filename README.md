@@ -75,8 +75,10 @@ python generate_enhanced_data.py
 # 2. Run all models and compare
 python models.py
 
-# 3. Create visualizations
+# 3. Create visualizations(for xgboost)
 python visualize_comparison.py
+
+python visualize_all_models.py #(for all models)
 
 # 4.streamlit visualizations
 streamlit run dashboard.py
