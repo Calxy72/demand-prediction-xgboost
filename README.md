@@ -33,6 +33,8 @@ A comprehensive demand prediction system implementing 4 different modeling appro
 ## Project Structure
 ```bash
 demand_prediction_xgboost/
+├── outputs # Generated output results
+├── dashbard.py # simplte dahsboard to visualize the results
 ├── generate_enhanced_data.py # Generate realistic dataset
 ├── enhanced_sales_data.csv # Generated sales data (90 days)
 ├── models.py # All 4 model implementations (with XGBoost)
@@ -76,7 +78,10 @@ python models.py
 # 3. Create visualizations
 python visualize_comparison.py
 
-# 4. Start API server
+# 4.streamlit visualizations
+streamlit run dashboard.py
+
+# 5. Start API server
 python enhanced_api.py
 ```
 ## XGBoost Model Details
