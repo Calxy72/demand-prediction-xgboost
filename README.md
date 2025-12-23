@@ -121,7 +121,7 @@ The architecture is production-ready and accuracy will improve naturally with mo
 
 # Video
 ```bash
-https://drive.google.com/file/d/1676Q6PoGnSYpegrAQmuVTFRo_tkij14Y/view?usp=sharing 
+https://drive.google.com/file/d/12HzJma48hpmgszvfsg6AMO89vbep3tsl/view?usp=drive_link
 ```
 # Citation
 
